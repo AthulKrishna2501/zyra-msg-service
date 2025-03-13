@@ -1,0 +1,55 @@
+package broker
+
+import (
+	"encoding/json"
+	"log"
+
+	"github.com/AthulKrishna2501/zyra-msg-service/internals/cache"
+	"github.com/AthulKrishna2501/zyra-msg-service/internals/email"
+	"github.com/streadway/amqp"
+)
+
+var RabbitMQConn *amqp.Connection
+
+func InitRabbitMQ() {
+	var err error
+	RabbitMQConn, err = amqp.Dial("amqp://guest:guest@localhost:5672/")
+	if err != nil {
+		log.Fatalf("Failed to connect to RabbitMQ: %v", err)
+	}
+	log.Println("Connected to RabbitMQ!")
+}
+
+func ConsumeOTP() {
+	ch, err := RabbitMQConn.Channel()
+	if err != nil {
+		log.Fatalf("Failed to open channel: %v", err)
+	}
+	defer ch.Close()
+
+	q, err := ch.QueueDeclare("otp_queue", true, false, false, false, nil)
+	if err != nil {
+		log.Fatalf("Failed to declare queue: %v", err)
+	}
+
+	msgs, err := ch.Consume(q.Name, "", true, false, false, false, nil)
+	if err != nil {
+		log.Fatalf("Failed to register consumer: %v", err)
+	}
+
+	log.Println("Waiting for OTP messages...")
+
+	for msg := range msgs {
+		var data map[string]string
+		json.Unmarshal(msg.Body, &data)
+
+		UserEmail := data["email"]
+		UserOtp := data["otp"]
+
+		cache.StoreOTP(UserEmail,UserOtp)
+
+		email.SendOTPEmail(UserEmail,UserOtp)
+
+		log.Printf("Sent OTP %s to %s", UserOtp, UserEmail)
+	}
+}
