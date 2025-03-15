@@ -39,7 +39,7 @@ func SendOTPEmail(email, otp string) {
 			"<h2 style='color: #2d89ef;'>Hello,</h2>"+
 			"<p>Your One-Time Password (OTP) for verification is:</p>"+
 			"<h1 style='color: #d9534f;'>%s</h1>"+
-			"<p>Please use this OTP within the next 10 minutes. Do not share it with anyone.</p>"+
+			"<p>Please use this OTP within the next 5 minutes. Do not share it with anyone.</p>"+
 			"<p>If you didn't request this OTP, please ignore this email.</p>"+
 			"<br>"+
 			"<p>Best regards,</p>"+

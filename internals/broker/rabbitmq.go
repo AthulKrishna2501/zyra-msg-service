@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/AthulKrishna2501/zyra-msg-service/internals/cache"
 	"github.com/AthulKrishna2501/zyra-msg-service/internals/email"
 	"github.com/streadway/amqp"
 )
@@ -46,9 +45,7 @@ func ConsumeOTP() {
 		UserEmail := data["email"]
 		UserOtp := data["otp"]
 
-		cache.StoreOTP(UserEmail,UserOtp)
-
-		email.SendOTPEmail(UserEmail,UserOtp)
+		email.SendOTPEmail(UserEmail, UserOtp)
 
 		log.Printf("Sent OTP %s to %s", UserOtp, UserEmail)
 	}
