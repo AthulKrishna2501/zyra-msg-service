@@ -5,14 +5,14 @@ import (
 	"log"
 
 	"github.com/AthulKrishna2501/zyra-msg-service/internals/email"
-	"github.com/streadway/amqp"
+	"github.com/rabbitmq/amqp091-go"
 )
 
-var RabbitMQConn *amqp.Connection
+var RabbitMQConn *amqp091.Connection
 
 func InitRabbitMQ() {
 	var err error
-	RabbitMQConn, err = amqp.Dial("amqp://guest:guest@localhost:5672/")
+	RabbitMQConn, err = amqp091.Dial("amqp://guest:guest@localhost:5672/")
 	if err != nil {
 		log.Fatalf("Failed to connect to RabbitMQ: %v", err)
 	}

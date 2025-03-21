@@ -5,22 +5,9 @@ import (
 	"log"
 	"net/smtp"
 	"os"
-	"path/filepath"
-
-	"github.com/joho/godotenv"
 )
 
 func SendOTPEmail(email, otp string) {
-	rootPath, err := filepath.Abs("../")
-	if err != nil {
-		log.Fatal("Failed to get root directory:", err)
-	}
-
-	envPath := filepath.Join(rootPath, ".env")
-	err = godotenv.Load(envPath)
-	if err != nil {
-		log.Fatal("Error loading .env file from:", envPath)
-	}
 
 	from := os.Getenv("EMAIL_ADDRESS")
 	password := os.Getenv("EMAIL_PASSWORD")
@@ -47,7 +34,7 @@ func SendOTPEmail(email, otp string) {
 			"</body></html>", otp))
 
 	auth := smtp.PlainAuth("", from, password, smtpHost)
-	err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message)
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message)
 	if err != nil {
 		log.Printf("Failed to send email: %v", err)
 	} else {
