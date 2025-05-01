@@ -1,11 +1,16 @@
 package config
 
 import (
+	"context"
 	"log"
 	"path/filepath"
 
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+var ChatCollection *mongo.Collection
 
 func LoadConfig() error {
 	rootPath, err := filepath.Abs(".")
@@ -27,4 +32,10 @@ func LoadConfig() error {
 
 	log.Println(".env file loaded successfully!")
 	return nil
+}
+
+func ConnectMongoDB() {
+	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	client, _ := mongo.Connect(context.Background(), clientOptions)
+	ChatCollection = client.Database("chatdb").Collection("messages")
 }
