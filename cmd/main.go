@@ -5,6 +5,7 @@ import (
 
 	"github.com/AthulKrishna2501/zyra-msg-service/internals/broker"
 	"github.com/AthulKrishna2501/zyra-msg-service/internals/config"
+	"github.com/AthulKrishna2501/zyra-msg-service/internals/healthcheck"
 	"github.com/AthulKrishna2501/zyra-msg-service/internals/websocket"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -13,7 +14,7 @@ import (
 func main() {
 	router := gin.Default()
 
-	err := godotenv.Load("../.env")
+	err := godotenv.Load("/app/.env")
 	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
@@ -25,6 +26,7 @@ func main() {
 	config.ConnectMongoDB()
 
 	router.GET("/ws", websocket.WebSocketHandler)
+	router.GET("/health", healthcheck.HealthCheckHandler)
 
 	router.Run(":8082")
 
